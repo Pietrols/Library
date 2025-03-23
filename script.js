@@ -1,4 +1,7 @@
-// Step 1: Define the Book Class
+// Step 1: Create the myLibrary Array
+const myLibrary = [];
+
+// Step 2: Define the Book Class
 class Book {
   constructor(title, author, pages, isRead) {
     this.id = crypto.randomUUID();
@@ -7,10 +10,12 @@ class Book {
     this.pages = pages;
     this.isRead = isRead;
   }
-}
 
-// Step 2: Create the myLibrary Array
-const myLibrary = [];
+  //Method to toggle read status
+  toggleReadStatus() {
+    this.isRead = !this.isRead;
+  }
+}
 
 // Step 3: Define the addBookToLibrary Function
 function addBookToLibrary(title, author, pages, isRead) {
@@ -108,11 +113,6 @@ function toggleReadStatus(bookId) {
     displayBooks(); // Refresh the UI
   }
 }
-
-// Add a prototype method to Book to toggle isRead
-Book.prototype.toggleReadStatus = function () {
-  this.isRead = !this.isRead;
-};
 
 // Initial setup: Add a couple of books to the library for testing
 addBookToLibrary("The Hobbit", "J.R.R. Tolkien", 295, true);
