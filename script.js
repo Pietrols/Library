@@ -1,10 +1,12 @@
-// Step 1: Define the Book Constructor
-function Book(title, author, pages, isRead) {
-  this.id = crypto.randomUUID(); // Unique ID for each book
-  this.title = title;
-  this.author = author;
-  this.pages = pages;
-  this.isRead = isRead;
+// Step 1: Define the Book Class
+class Book {
+  constructor(title, author, pages, isRead) {
+    this.id = crypto.randomUUID();
+    this.title = title;
+    this.author = author;
+    this.pages = pages;
+    this.isRead = isRead;
+  }
 }
 
 // Step 2: Create the myLibrary Array
