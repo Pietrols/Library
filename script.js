@@ -1,7 +1,32 @@
-// Step 1: Create the myLibrary Array
-const myLibrary = [];
+//  Create the myLibrary Array
+let myLibrary = [];
 
-// Step 2: Define the Book Class
+function loadLibraryFromLocalStorage() {
+  const storedLibrary = localStorage.getItem("myLibrary");
+  if (storedLibrary) {
+    const parsedBooks = JSON.parse(storedLibrary);
+
+    // Rehydrate books as class instances
+    myLibrary = parsedBooks.map((bookData) => {
+      const book = new Book(
+        bookData.title,
+        bookData.author,
+        bookData.pages,
+        bookData.isRead
+      );
+      book.id = bookData.id; // Reassign original ID
+      return book;
+    });
+  } else {
+    // Only add sample books if localStorage is empty
+    addBookToLibrary("The Hobbit", "J.R.R. Tolkien", 295, true);
+    addBookToLibrary("Digital Fortress", "Dan Brown", 510, false);
+  }
+
+  displayBooks();
+}
+
+// Define the Book Class
 class Book {
   constructor(title, author, pages, isRead) {
     this.id = crypto.randomUUID();
@@ -17,14 +42,15 @@ class Book {
   }
 }
 
-// Step 3: Define the addBookToLibrary Function
+// Define the addBookToLibrary Function
 function addBookToLibrary(title, author, pages, isRead) {
   const newBook = new Book(title, author, pages, isRead);
   myLibrary.push(newBook);
+  saveLibraryToLocalStorage();
   displayBooks(); // Update the UI after adding a new book
 }
 
-// Step 4: Define the displayBooks Function
+// Define the displayBooks Function
 function displayBooks() {
   const booksContainer = document.getElementById("books-container");
   booksContainer.innerHTML = ""; // Clear the existing display
@@ -106,7 +132,7 @@ function initializeFormValidation() {
   });
 }
 
-// Step 5: Add a "New Book" Button and Form
+// Add a "New Book" Button and Form
 const newBookForm = document.getElementById("new-book-form");
 const newBookButton = document.getElementById("new-book-button");
 
@@ -175,7 +201,7 @@ function showError(input, errorSpan) {
   }
 }
 
-// Step 6: Event Delegation for Remove and Toggle Read Buttons
+// Event Delegation for Remove and Toggle Read Buttons
 document
   .getElementById("books-container")
   .addEventListener("click", (event) => {
@@ -199,6 +225,7 @@ function removeBookFromLibrary(bookId) {
   const bookIndex = myLibrary.findIndex((book) => book.id === bookId);
   if (bookIndex !== -1) {
     myLibrary.splice(bookIndex, 1); // Remove the book from the array
+    saveLibraryToLocalStorage(); // Updating local storage
     displayBooks(); // Refresh the UI
   }
 }
@@ -208,13 +235,15 @@ function toggleReadStatus(bookId) {
   const book = myLibrary.find((book) => book.id === bookId);
   if (book) {
     book.toggleReadStatus(); // Toggle the read status
+    saveLibraryToLocalStorage();
     displayBooks(); // Refresh the UI
   }
 }
 
+function saveLibraryToLocalStorage() {
+  localStorage.setItem("myLibrary", JSON.stringify(myLibrary));
+}
+
 // Initialize validation
 initializeFormValidation();
-
-// Initial setup: Add a couple of books to the library for testing
-addBookToLibrary("The Hobbit", "J.R.R. Tolkien", 295, true);
-addBookToLibrary("Digital Fortress", "Dan Brown", 510, false);
+loadLibraryFromLocalStorage();
