@@ -52,7 +52,61 @@ function displayBooks() {
   });
 }
 
-// Step 5: Add a “New Book” Button and Form
+// Initialize form validation
+function initializeFormValidation() {
+  const title = document.getElementById("title");
+  const author = document.getElementById("author");
+  const pages = document.getElementById("pages");
+
+  // Error spans
+  const titleError = document.getElementById("titleError");
+  const authorError = document.getElementById("authorError");
+  const pageError = document.getElementById("pageError");
+
+  //show error messages for each field
+  function showError(input, errorSpan) {
+    if (input.validity.valueMissing) {
+      errorSpan.textContent = "This field is required.";
+    } else if (input.validity.typeMismatch) {
+      errorSpan.textContent = "Please enter a valid format";
+    } else if (input.validity.tooShort) {
+      errorSpan.textContent = `Should be at least ${input.minLength} characters; you entered ${input.value.length}`;
+    } else if (input.validity.tooLong) {
+      errorSpan.textContent = `Should be no more than ${input.maxLength} characters; you entered ${input.value.length}`;
+    } else if (input.validity.rangeUnderflow) {
+      errorSpan.textContent = `Value must be at least ${input.min}`;
+    } else {
+      errorSpan.textContent = "";
+    }
+  }
+
+  // Input event listeners for real-time validation
+  title.addEventListener("input", () => {
+    if (title.validity.valid) {
+      titleError.textContent = "";
+    } else {
+      showError(title, titleError);
+    }
+  });
+
+  author.addEventListener("input", () => {
+    if (author.validity.valid) {
+      authorError.textContent = "";
+    } else {
+      showError(author, authorError);
+    }
+  });
+
+  pages.addEventListener("input", () => {
+    if (pages.validity.valid) {
+      pageError.textContent = "";
+    } else {
+      showError(pages, pageError);
+    }
+  });
+}
+
+// Step 5: Add a "New Book" Button and Form
 const newBookForm = document.getElementById("new-book-form");
 const newBookButton = document.getElementById("new-book-button");
 
@@ -61,21 +115,65 @@ newBookButton.addEventListener("click", () => {
 });
 
 newBookForm.addEventListener("submit", (event) => {
-  event.preventDefault(); // Prevent form submission
+  event.preventDefault(); // Prevent the form from submitting by default
 
-  // Get form data
-  const title = document.getElementById("title").value;
-  const author = document.getElementById("author").value;
-  const pages = document.getElementById("pages").value;
+  const title = document.getElementById("title");
+  const author = document.getElementById("author");
+  const pages = document.getElementById("pages");
   const isRead = document.getElementById("is-read").checked;
 
-  // Add the new book to the library
-  addBookToLibrary(title, author, pages, isRead);
+  const titleError = document.getElementById("titleError");
+  const authorError = document.getElementById("authorError");
+  const pageError = document.getElementById("pageError");
+
+  // Check each field's validity
+  let isValid = true;
+
+  if (!title.validity.valid) {
+    showError(title, titleError);
+    isValid = false;
+  }
+
+  if (!author.validity.valid) {
+    showError(author, authorError);
+    isValid = false;
+  }
+
+  if (!pages.validity.valid) {
+    showError(pages, pageError);
+    isValid = false;
+  }
+
+  if (!isValid) {
+    return; // Stop form processing if validation fails
+  }
+
+  // If validation passes, add the new book to the library
+  addBookToLibrary(title.value, author.value, pages.value, isRead);
 
   // Reset the form and hide it
   newBookForm.reset();
   newBookForm.style.display = "none";
+
+  alert("Book added successfully!");
 });
+
+// Helper function to show errors
+function showError(input, errorSpan) {
+  if (input.validity.valueMissing) {
+    errorSpan.textContent = "This field is required.";
+  } else if (input.validity.typeMismatch) {
+    errorSpan.textContent = "Please enter a valid format";
+  } else if (input.validity.tooShort) {
+    errorSpan.textContent = `Should be at least ${input.minLength} characters; you entered ${input.value.length}`;
+  } else if (input.validity.tooLong) {
+    errorSpan.textContent = `Should be no more than ${input.maxLength} characters; you entered ${input.value.length}`;
+  } else if (input.validity.rangeUnderflow) {
+    errorSpan.textContent = `Value must be at least ${input.min}`;
+  } else {
+    errorSpan.textContent = "";
+  }
+}
 
 // Step 6: Event Delegation for Remove and Toggle Read Buttons
 document
@@ -114,6 +212,9 @@ function toggleReadStatus(bookId) {
   }
 }
 
+// Initialize validation
+initializeFormValidation();
+
 // Initial setup: Add a couple of books to the library for testing
 addBookToLibrary("The Hobbit", "J.R.R. Tolkien", 295, true);
-addBookToLibrary("Digital Fortress", "Dan Brown", "510", "read");
+addBookToLibrary("Digital Fortress", "Dan Brown", 510, false);

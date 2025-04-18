@@ -103,3 +103,18 @@ h1 {
 .book-card button:hover {
   background-color: #555;
 }
+
+.error {
+  color: red;
+  font-size: 0.8em;
+  display: block;
+  margin-top: 5px;
+}
+
+input:invalid {
+  border: 2px solid red;
+}
+
+input:valid {
+  border: 2px solid green;
+}
